@@ -122,7 +122,6 @@ struct WishlistViewIOS: View {
             .refreshableCompat(action: { await wishModel.fetchList() })
             .padding([.leading, .bottom, .trailing])
 
-
             HStack {
                 Spacer()
 
@@ -146,31 +145,44 @@ struct WishlistViewIOS: View {
         .ignoresSafeArea(edges: [.leading, .bottom, .trailing])
         .navigationTitle(WishKit.config.localization.featureWishlist)
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
+        .toolbarCompat(action: wishModel.fetchList)
+        .onAppear(perform: wishModel.fetchList)
+    }
+}
 
-            ToolbarItem(placement: .topBarLeading) {
-                getRefreshButton()
-            }
+extension View {
 
-            ToolbarItem(placement: .topBarTrailing) {
-                if WishKit.config.buttons.doneButton.display == .show {
-                    Button(WishKit.config.localization.done) {
-                        UIApplication.shared.windows.first(where: \.isKeyWindow)?.rootViewController?.dismiss(animated: true)
+    /// We don't want
+    @ViewBuilder
+    func toolbarCompat(action: @escaping () -> Void) -> some View {
+        if #unavailable(iOS 15) {
+            self.toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button(action: action) {
+                        Image(systemName: "arrow.clockwise")
+                    }
+                }
+
+                ToolbarItem(placement: .topBarTrailing) {
+                    if WishKit.config.buttons.doneButton.display == .show {
+                        Button(WishKit.config.localization.done) {
+                            UIApplication.shared.windows.first(where: \.isKeyWindow)?.rootViewController?.dismiss(animated: true)
+                        }
                     }
                 }
             }
-        }.onAppear(perform: wishModel.fetchList)
-    }
-
-    // MARK: - View
-
-    func getRefreshButton() -> some View {
-        if #unavailable(iOS 15) {
-            return Button(action: wishModel.fetchList) {
-                Image(systemName: "arrow.clockwise")
-            }
         } else {
-            return EmptyView()
+            if WishKit.config.buttons.doneButton.display == .show {
+                self.toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(WishKit.config.localization.done) {
+                            UIApplication.shared.windows.first(where: \.isKeyWindow)?.rootViewController?.dismiss(animated: true)
+                        }
+                    }
+                }
+            } else {
+                self
+            }
         }
     }
 }
