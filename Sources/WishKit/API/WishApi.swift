@@ -9,7 +9,7 @@
 import Foundation
 import WishKitShared
 
-struct WishApi: RequestCreatable {
+public struct WishApi: RequestCreatable {
 
     private static let baseUrl = "\(ProjectSettings.apiUrl)"
 
@@ -37,7 +37,15 @@ struct WishApi: RequestCreatable {
 
     // MARK: - Api Requests
 
-    static func fetchWishList(
+    public static func fetchWishList() async -> ApiResult<ListWishResponse, ApiError> {
+        await withCheckedContinuation { continuation in
+            fetchWishList() { completion in
+                continuation.resume(returning: completion)
+            }
+        }
+    }
+
+    public static func fetchWishList(
         completionHandler: @escaping (ApiResult<ListWishResponse, ApiError>) -> Void
     ) {
         guard let request = fetchWishList() else {
@@ -48,11 +56,20 @@ struct WishApi: RequestCreatable {
         Api.send(request: request, completionHandler: completionHandler)
     }
 
-    static func createWish(
+    public static func createWish(
+        createRequest: CreateWishRequest
+    ) async -> ApiResult<CreateWishResponse, ApiError> {
+        await withCheckedContinuation { continuation in
+            createWish(createRequest: createRequest) { completion in
+                continuation.resume(returning: completion)
+            }
+        }
+    }
+
+    public static func createWish(
         createRequest: CreateWishRequest,
         completionHandler: @escaping (ApiResult<CreateWishResponse, ApiError>) -> Void
     ) {
-
         guard let request = createWish(createRequest) else {
             completionHandler(.failure(ApiError(reason: .couldNotCreateRequest)))
             return
@@ -61,7 +78,17 @@ struct WishApi: RequestCreatable {
         Api.send(request: request, completionHandler: completionHandler)
     }
 
-    static func voteWish(
+    public static func voteWish(
+        voteRequest: VoteWishRequest
+    ) async -> ApiResult<VoteWishResponse, ApiError> {
+        await withCheckedContinuation { continuation in
+            voteWish(voteRequest: voteRequest) { completion in
+                continuation.resume(returning: completion)
+            }
+        }
+    }
+
+    public static func voteWish(
         voteRequest: VoteWishRequest,
         completionHandler: @escaping (ApiResult<VoteWishResponse, ApiError>) -> Void
     ) {

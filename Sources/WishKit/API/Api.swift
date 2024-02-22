@@ -9,13 +9,13 @@
 import Foundation
 import WishKitShared
 
-struct Api: RequestCreatable {
+public struct Api: RequestCreatable {
     enum Version: String {
         case v1
     }
 }
 
-enum ApiResult<Success, Error> {
+public enum ApiResult<Success, Error> {
     case success(Success)
     case failure(Error)
 }
