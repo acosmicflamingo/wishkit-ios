@@ -8,17 +8,17 @@
 
 import Foundation
 
-struct UUIDManager {
+public struct UUIDManager {
 
     private static let slug = "wishkit"
 
     private static let userUUIDKey = "\(slug)-user-uuid"
 
-    static func store(uuid: UUID) {
+    public static func store(uuid: UUID) {
         UserDefaults.standard.set(uuid.uuidString, forKey: userUUIDKey)
     }
 
-    static func getUUID() -> UUID {
+    public static func getUUID() -> UUID {
         if
             let uuidString = UserDefaults.standard.string(forKey: userUUIDKey),
             let uuid = UUID(uuidString: uuidString)
@@ -33,7 +33,9 @@ struct UUIDManager {
         return uuid
     }
 
-    static func deleteUUID() {
+    public static func deleteUUID() {
         UserDefaults.standard.removeObject(forKey: userUUIDKey)
     }
+
+  public init() {}
 }

@@ -11,7 +11,7 @@ let package = Package(
         .library(name: "WishKit", targets: ["WishKit"])
     ],
     dependencies: [
-        .package(url: "https://github.com/wishkit/wishkit-ios-shared.git", exact: "1.4.3")
+        .package(name: "wishkit-ios-shared", path: "../wishkit-ios-shared")
     ],
     targets: [
         .target(name: "WishKit", dependencies: [

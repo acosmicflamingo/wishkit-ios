@@ -67,7 +67,10 @@ struct DetailWishView: View {
                             let request = CreateCommentRequest(wishId: wishResponse.id, description: commentModel.newCommentValue)
 
                             commentModel.isLoading = true
-                            let response = await CommentApi.createComment(request: request)
+                            let response = await CommentApi.createComment(
+                              request: request,
+                              userUUID: UUIDManager.getUUID()
+                            )
                             commentModel.isLoading = false
 
                             switch response {

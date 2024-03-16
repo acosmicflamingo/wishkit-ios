@@ -17,15 +17,20 @@ struct CommentApi: RequestCreatable {
 
     // MARK: - URLRequests
 
-    private static func createComment(_ request: CreateCommentRequest) -> URLRequest? {
+    private static func createComment(
+        _ request: CreateCommentRequest,
+        userUUID uuid: UUID
+    ) -> URLRequest? {
         guard var url = endpoint else { return nil }
         url.appendPathComponent("create")
-        return createAuthedPOSTReuqest(to: url, with: request)
+        return createAuthedPOSTRequest(to: url, with: request, userUUID: uuid)
     }
 
-    static func createComment(request: CreateCommentRequest) async -> ApiResult<CommentResponse, ApiError> {
-
-        guard let request = createComment(request) else {
+    static func createComment(
+        request: CreateCommentRequest,
+        userUUID uuid: UUID
+    ) async -> ApiResult<CommentResponse, ApiError> {
+        guard let request = createComment(request, userUUID: uuid) else {
             return .failure(ApiError(reason: .couldNotCreateRequest))
         }
 

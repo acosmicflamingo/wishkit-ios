@@ -17,38 +17,51 @@ public struct WishApi: RequestCreatable {
 
     // MARK: - URLRequests
 
-    private static func fetchWishList() -> URLRequest? {
+    private static func fetchWishList(
+      userUUID uuid: UUID
+    ) -> URLRequest? {
         guard var url = endpoint else { return nil }
         url.appendPathComponent("list")
-        return createAuthedGETReuqest(to: url)
+        return createAuthedGETRequest(to: url, userUUID: uuid)
     }
 
-    private static func createWish(_ createRequest: CreateWishRequest) -> URLRequest? {
+    private static func createWish(
+      _ createRequest: CreateWishRequest,
+      userUUID uuid: UUID
+    ) -> URLRequest? {
         guard var url = endpoint else { return nil }
         url.appendPathComponent("create")
-        return createAuthedPOSTReuqest(to: url, with: createRequest)
+        return createAuthedPOSTRequest(to: url, with: createRequest, userUUID: uuid)
     }
 
-    private static func voteWish(_ voteRequest: VoteWishRequest) -> URLRequest? {
+    private static func voteWish(
+      _ voteRequest: VoteWishRequest,
+      userUUID uuid: UUID
+    ) -> URLRequest? {
         guard var url = endpoint else { return nil }
         url.appendPathComponent("vote")
-        return createAuthedPOSTReuqest(to: url, with: voteRequest)
+        return createAuthedPOSTRequest(to: url, with: voteRequest, userUUID: uuid)
     }
 
     // MARK: - Api Requests
 
-    public static func fetchWishList() async -> ApiResult<ListWishResponse, ApiError> {
-        await withCheckedContinuation { continuation in
-            fetchWishList() { completion in
+    public static func fetchWishList(
+        userUUID uuid: UUID? = nil
+    ) async -> ApiResult<ListWishResponse, ApiError> {
+        let uuid = uuid ?? UUIDManager.getUUID()
+        return await withCheckedContinuation { continuation in
+            fetchWishList(userUUID: uuid) { completion in
                 continuation.resume(returning: completion)
             }
         }
     }
 
     public static func fetchWishList(
+        userUUID uuid: UUID? = nil,
         completionHandler: @escaping (ApiResult<ListWishResponse, ApiError>) -> Void
     ) {
-        guard let request = fetchWishList() else {
+        let uuid = uuid ?? UUIDManager.getUUID()
+        guard let request = fetchWishList(userUUID: uuid) else {
             completionHandler(.failure(ApiError(reason: .couldNotCreateRequest)))
             return
         }
@@ -57,10 +70,12 @@ public struct WishApi: RequestCreatable {
     }
 
     public static func createWish(
-        createRequest: CreateWishRequest
+        createRequest: CreateWishRequest,
+        userUUID uuid: UUID? = nil
     ) async -> ApiResult<CreateWishResponse, ApiError> {
-        await withCheckedContinuation { continuation in
-            createWish(createRequest: createRequest) { completion in
+        let uuid = uuid ?? UUIDManager.getUUID()
+        return await withCheckedContinuation { continuation in
+            createWish(createRequest: createRequest, userUUID: uuid) { completion in
                 continuation.resume(returning: completion)
             }
         }
@@ -68,9 +83,11 @@ public struct WishApi: RequestCreatable {
 
     public static func createWish(
         createRequest: CreateWishRequest,
+        userUUID uuid: UUID? = nil,
         completionHandler: @escaping (ApiResult<CreateWishResponse, ApiError>) -> Void
     ) {
-        guard let request = createWish(createRequest) else {
+        let uuid = uuid ?? UUIDManager.getUUID()
+        guard let request = createWish(createRequest, userUUID: uuid) else {
             completionHandler(.failure(ApiError(reason: .couldNotCreateRequest)))
             return
         }
@@ -79,10 +96,12 @@ public struct WishApi: RequestCreatable {
     }
 
     public static func voteWish(
-        voteRequest: VoteWishRequest
+        voteRequest: VoteWishRequest,
+        userUUID uuid: UUID? = nil
     ) async -> ApiResult<VoteWishResponse, ApiError> {
-        await withCheckedContinuation { continuation in
-            voteWish(voteRequest: voteRequest) { completion in
+        let uuid = uuid ?? UUIDManager.getUUID()
+        return await withCheckedContinuation { continuation in
+            voteWish(voteRequest: voteRequest, userUUID: uuid) { completion in
                 continuation.resume(returning: completion)
             }
         }
@@ -90,10 +109,11 @@ public struct WishApi: RequestCreatable {
 
     public static func voteWish(
         voteRequest: VoteWishRequest,
+        userUUID uuid: UUID? = nil,
         completionHandler: @escaping (ApiResult<VoteWishResponse, ApiError>) -> Void
     ) {
-
-        guard let request = voteWish(voteRequest) else {
+        let uuid = uuid ?? UUIDManager.getUUID()
+        guard let request = voteWish(voteRequest, userUUID: uuid) else {
             completionHandler(.failure(ApiError(reason: .couldNotCreateRequest)))
             return
         }

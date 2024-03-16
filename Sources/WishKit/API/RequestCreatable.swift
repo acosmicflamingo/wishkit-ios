@@ -44,30 +44,44 @@ extension RequestCreatable {
 
     // MARK: - Authed URLRequests
 
-    static func createAuthedPOSTReuqest<T: Encodable>(to url: URL, with body: T) -> URLRequest {
+    static func createAuthedPOSTRequest<T: Encodable>(
+        to url: URL,
+        with body: T,
+        userUUID uuid: UUID
+    ) -> URLRequest {
         var request = createPOSTRequest(to: url, with: body)
-        request.addAuth()
+        request.addAuth(userUUID: uuid)
         request.addSdkInfo()
         return request
     }
 
-    static func createAuthedGETReuqest(to url: URL) -> URLRequest {
+    static func createAuthedGETRequest(
+        to url: URL,
+        userUUID uuid: UUID
+    ) -> URLRequest {
         var request = createGETRequest(to: url)
-        request.addAuth()
+        request.addAuth(userUUID: uuid)
         request.addSdkInfo()
         return request
     }
 
-    static func createAuthedPATCHReuqest<T: Encodable>(to url: URL, with body: T) -> URLRequest {
+    static func createAuthedPATCHRequest<T: Encodable>(
+        to url: URL,
+        with body: T,
+        userUUID uuid: UUID
+    ) -> URLRequest {
         var request = createPATCHRequest(to: url, with: body)
-        request.addAuth()
+        request.addAuth(userUUID: uuid)
         request.addSdkInfo()
         return request
     }
 
-    static func createAuthedDELETERequest(to url: URL) -> URLRequest {
+    static func createAuthedDELETERequest(
+        to url: URL,
+        userUUID uuid: UUID
+    ) -> URLRequest {
         var request = createDELETERequest(to: url)
-        request.addAuth()
+        request.addAuth(userUUID: uuid)
         request.addSdkInfo()
         return request
     }
@@ -76,8 +90,7 @@ extension RequestCreatable {
 extension URLRequest {
 
     /// Adds User UUID and Bearer token to URLRequest if given.
-    mutating func addAuth() {
-        let uuid = UUIDManager.getUUID()
+    mutating func addAuth(userUUID uuid: UUID) {
         let token = WishKit.apiKey
         self.setValue(token, forHTTPHeaderField: "x-wishkit-api-key")
         self.setValue(uuid.uuidString, forHTTPHeaderField: "x-wishkit-uuid")

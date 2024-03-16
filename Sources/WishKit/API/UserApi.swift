@@ -17,15 +17,21 @@ struct UserApi: RequestCreatable {
 
     // MARK: - URLRequests
 
-    private static func updateUser(_ userRequest: UserRequest) -> URLRequest? {
+    private static func updateUser(
+        _ userRequest: UserRequest,
+        userUUID uuid: UUID
+    ) -> URLRequest? {
         guard var url = endpoint else { return nil }
         url.appendPathComponent("update")
-        return createAuthedPOSTReuqest(to: url, with: userRequest)
+        return createAuthedPOSTRequest(to: url, with: userRequest, userUUID: uuid)
     }
 
-    static func updateUser(userRequest: UserRequest) async -> ApiResult<UserResponse, ApiError> {
+    static func updateUser(
+        userRequest: UserRequest,
+        userUUID uuid: UUID
+    ) async -> ApiResult<UserResponse, ApiError> {
 
-        guard let request = updateUser(userRequest) else {
+        guard let request = updateUser(userRequest, userUUID: uuid) else {
             return .failure(ApiError(reason: .couldNotCreateRequest))
         }
 

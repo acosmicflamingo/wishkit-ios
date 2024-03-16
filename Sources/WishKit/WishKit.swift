@@ -118,8 +118,9 @@ extension WishKit {
 
     static func sendUserToBackend() {
         Task {
+            let uuid = UUIDManager.getUUID()
             let request = user.createRequest()
-            let _ = await UserApi.updateUser(userRequest: request)
+            let _ = await UserApi.updateUser(userRequest: request, userUUID: uuid)
         }
     }
 }
